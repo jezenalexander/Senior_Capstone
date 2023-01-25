@@ -11,4 +11,4 @@ Senior_Capstone.pdf - this is the final paper that I submitted for grading that 
 
 Accept or Reject Clients' Loan Applications.pptx - this is a slideshow that I use to present my project to the Math department
 
-R_Code - this is the R codes that I wrote for the project (data preparation, modeling and simulations)
+R_Codes - this is the R codes that I wrote for the project (data preparation, modeling and simulations)
