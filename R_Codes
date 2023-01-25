@@ -1,0 +1,444 @@
+## Example of Linear Regression ##
+#Simple dataset for illustration purposes#
+
+x=c(1,2,3,4,5)
+y=c(3,5,7,10,12)
+HW <- data.frame(x,y)
+
+#Linear regression model
+(linear_model <- lm(y ~ x, data=HW))
+plot(HW$x, HW$y, xlab="No. of Hours Spent", ylab="No. of Questions
+Completed", main="No. of Hours Spent vs. No.of Homework Questions Completed"
+, cex.lab=1.2)
+abline(linear_model)
+
+## Example of Logistic Regression ##
+#Simple dataset for illustration purposes#
+
+w <- c(1,0,0,0,1,1,0,1,0,1,0,1,0,0,0,1,1,1,0,0,0,1,1,1,0,1,0,1,1,0,1,0,0,0)
+z <- c(470,781,734,483,345,200,689,205,700,278,750,223,689,703,767,
+0,298,270,700,788,777,0,232,333,732,0,800,0,203,695,495,572,500,400)
+loan_payment <- data.frame(w,z)
+
+#Discrete data modeled using linear regression and its plot
+
+(linear_model_2 <- lm(w ~ z, data=loan_payment))
+plot(jitter(loan_payment$z,0.1), jitter(loan_payment$w,0.1),ylab="Payment
+Difficulties?", xlab="Credit Scores",
+main="Credit Scores vs. Whether Clients will have Payment Difficulties
+", cex.lab=1.2)
+abline(linear_model_2,lwd=2, col="blue") #Regression line
+
+#Discrete data modeled using logistic regression and its plot
+
+(logistic_model <- glm(w ~ z , data = loan_payment, family = "binomial"))
+ww <- seq(0,850,10)
+zz <- predict(logistic_model, list(z = ww),type="response")
+plot(jitter(loan_payment$z,0.1), jitter(loan_payment$w,0.1),ylab="Probability
+of having Payment Difficulties",
+xlab="Credit Scores", main="Credit Scores vs. Probability of having
+Payment Difficulties ", cex.lab=1.2)
+lines(ww,zz,lwd=2,col="blue") #Logistic curve
+
+##DATA PREPARATION##
+#Import Home Credit Group data into R
+
+Loan <- read.csv(file="c:/Users/jezen/OneDrive/Desktop/SPU/Fall'18/MAT4899/LoanDifficulty.csv", header=TRUE, sep=",")
+nrow(Loan)
+table(Loan$TARGET)
+#Check missing values
+colSums(is.na(Loan))
+names(Loan)
+
+#Remove variables with too many mising values
+
+loan2 <- Loan[c(1:21, 23:44, 87:88, 90:122)]
+colSums(is.na(loan2))
+
+#Summary of variables
+
+summary(loan2$AMT_ANNUITY)
+summary(loan2$AMT_GOODS_PRICE)
+summary(loan2$CNT_FAM_MEMBERS)
+summary(loan2$OBS_30_CNT_SOCIAL_CIRCLE)
+summary(loan2$OBS_60_CNT_SOCIAL_CIRCLE)
+summary(loan2$DEF_30_CNT_SOCIAL_CIRCLE)
+summary(loan2$DEF_60_CNT_SOCIAL_CIRCLE)
+summary(loan2$AMT_REQ_CREDIT_BUREAU_HOUR)
+summary(loan2$AMT_REQ_CREDIT_BUREAU_DAY)
+summary(loan2$AMT_REQ_CREDIT_BUREAU_WEEK)
+summary(loan2$AMT_REQ_CREDIT_BUREAU_MON)
+summary(loan2$AMT_REQ_CREDIT_BUREAU_QRT)
+summary(loan2$AMT_REQ_CREDIT_BUREAU_YEAR)
+
+#Replace missing values
+
+loan2$CNT_FAM_MEMBERS[which(is.na(loan2$CNT_FAM_MEMBERS))] <- 0
+loan2$AMT_GOODS_PRICE[which(is.na(loan2$AMT_GOODS_PRICE))] <-mean(loan2$AMT_GOODS_PRICE, na.rm = TRUE)
+loan2$OBS_30_CNT_SOCIAL_CIRCLE[which(is.na(loan2$OBS_30_CNT_SOCIAL_CIRCLE))]<- mean(loan2$OBS_30_CNT_SOCIAL_CIRCLE, na.rm = TRUE)
+loan2$OBS_60_CNT_SOCIAL_CIRCLE[which(is.na(loan2$OBS_60_CNT_SOCIAL_CIRCLE))]<- mean(loan2$OBS_60_CNT_SOCIAL_CIRCLE, na.rm = TRUE)
+loan2$DEF_30_CNT_SOCIAL_CIRCLE[which(is.na(loan2$DEF_30_CNT_SOCIAL_CIRCLE))]<- mean(loan2$DEF_30_CNT_SOCIAL_CIRCLE, na.rm = TRUE)
+loan2$DEF_60_CNT_SOCIAL_CIRCLE[which(is.na(loan2$DEF_60_CNT_SOCIAL_CIRCLE))]<- mean(loan2$DEF_60_CNT_SOCIAL_CIRCLE, na.rm = TRUE)
+loan2$AMT_REQ_CREDIT_BUREAU_HOUR[which(is.na(loan2$AMT_REQ_CREDIT_BUREAU_HOUR))] <- mean(loan2$AMT_REQ_CREDIT_BUREAU_HOUR, na.rm = TRUE)
+loan2$AMT_REQ_CREDIT_BUREAU_DAY[which(is.na(loan2$AMT_REQ_CREDIT_BUREAU_DAY))] <- mean(loan2$AMT_REQ_CREDIT_BUREAU_DAY, na.rm = TRUE)
+loan2$AMT_REQ_CREDIT_BUREAU_WEEK[which(is.na(loan2$AMT_REQ_CREDIT_BUREAU_WEEK))] <- mean(loan2$AMT_REQ_CREDIT_BUREAU_WEEK, na.rm = TRUE)
+loan2$AMT_REQ_CREDIT_BUREAU_MON[which(is.na(loan2$AMT_REQ_CREDIT_BUREAU_MON))] <- mean(loan2$AMT_REQ_CREDIT_BUREAU_MON, na.rm = TRUE)
+loan2$AMT_REQ_CREDIT_BUREAU_QRT[which(is.na(loan2$AMT_REQ_CREDIT_BUREAU_QRT))] <- mean(loan2$AMT_REQ_CREDIT_BUREAU_QRT, na.rm = TRUE)
+
+loan2$AMT_REQ_CREDIT_BUREAU_YEAR[which(is.na(loan2$AMT_REQ_CREDIT_BUREAU_YEAR))] <- mean(loan2$AMT_REQ_CREDIT_BUREAU_YEAR, na.rm = TRUE)
+loan2$EXT_SOURCE_1[which(is.na(loan2$EXT_SOURCE_1))] <- 0
+loan2$EXT_SOURCE_2[which(is.na(loan2$EXT_SOURCE_2))] <- 0
+loan2$EXT_SOURCE_3[which(is.na(loan2$EXT_SOURCE_3))] <- 0
+colSums(is.na(loan2))
+sum(is.na(loan2))
+names(loan2)
+
+#Omit remaining missing values (AMT_ANNUITY = 12 missing)
+
+loan3 <- na.omit(loan2)
+
+#Take the average of the three credit scores from different sources and store in a new variable called 'Scores'
+
+library(dplyr)
+loan4 <- mutate(loan3, Scores = (EXT_SOURCE_1 + EXT_SOURCE_2 +
+EXT_SOURCE_3)/3)
+names(loan4)
+
+#Remove EXT_SOURCE 1-3 since already have average score
+
+loan5 <- loan4[c(1:40, 44:79)]
+names(loan5)
+colSums(is.na(loan5))
+
+#Check frequencies#
+#Loan Type (Cash loans, Revolving loan)
+
+t = table(loan5$NAME_CONTRACT_TYPE)
+as.data.frame(t)
+
+#Gender (M, F, XNA), Omit the 4 rows with gender XNA
+
+g = table(loan5$CODE_GENDER)
+as.data.frame(g)
+which(loan5$CODE_GENDER == "XNA")
+loan5 <- loan5[-35657, ]
+loan5 <- loan5[-38565, ]
+loan5 <- loan5[-83374, ]
+loan5 <- loan5[-189629, ]
+
+#OwnCar (Y, N)
+
+c = table(loan5$FLAG_OWN_CAR)
+as.data.frame(c)
+
+#OwnHouse (Y, N)
+
+h = table(loan5$FLAG_OWN_REALTY)
+as.data.frame(h)
+
+#AccompaniedBy (Children,Family,Group of people, Other_A, Other_B, Spouse, partner, Unaccompanied)
+
+a = table(loan5$NAME_TYPE_SUITE)
+as.data.frame(a)
+
+#IncomeType (Businessman, Commercial associate, Maternity leave, Pensioner, State Servant Student, Unemployed, Working)
+
+i = table(loan5$NAME_INCOME_TYPE)
+as.data.frame(i)
+
+#Education (Academic degree, Higher education, Incomplete higher, Lower secondary, Secondary / secondary special)
+
+e = table(loan5$NAME_EDUCATION_TYPE)
+as.data.frame(e)
+
+#FamilyStatus (Civil marriage, Married, Separated, Single / not married, Unknown, Widow)
+
+fs = table(loan5$NAME_FAMILY_STATUS)
+as.data.frame(fs)
+
+#HouseType (Co-op apartment, House / apartment, Municipal apartment, Office apartment, Rented apartment, With parents)
+
+ht = table(loan5$NAME_HOUSING_TYPE)
+as.data.frame(ht)
+
+#Organization (too much)
+
+o = table(loan5$ORGANIZATION_TYPE)
+as.data.frame(o)
+
+#Occupation (19)
+
+oc = table(loan5$OCCUPATION_TYPE)
+as.data.frame(oc)
+
+#Housetype_mode
+
+hm = table(loan5$HOUSETYPE_MODE)
+as.data.frame(hm)
+
+#Proportion tables for binary and categorical variables
+
+prop.table(table(loan5$TARGET, loan5$NAME_CONTRACT_TYPE),margin=2)
+prop.table(table(loan5$TARGET, loan5$CODE_GENDER),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_OWN_CAR),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_OWN_REALTY),margin=2)
+prop.table(table(loan5$TARGET, loan5$NAME_TYPE_SUITE),margin=2)
+prop.table(table(loan5$TARGET, loan5$NAME_INCOME_TYPE),margin=2)
+prop.table(table(loan5$TARGET, loan5$NAME_EDUCATION_TYPE),margin=2)
+prop.table(table(loan5$TARGET, loan5$NAME_FAMILY_STATUS),margin=2)
+prop.table(table(loan5$TARGET, loan5$NAME_HOUSING_TYPE),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_MOBIL),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_EMP_PHONE),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_WORK_PHONE),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_CONT_MOBILE),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_PHONE),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_EMAIL),margin=2)
+prop.table(table(loan5$TARGET, loan5$OCCUPATION_TYPE),margin=2)
+prop.table(table(loan5$TARGET, loan5$REG_REGION_NOT_LIVE_REGION),margin=2)
+prop.table(table(loan5$TARGET, loan5$REG_REGION_NOT_WORK_REGION),margin=2)
+prop.table(table(loan5$TARGET, loan5$LIVE_REGION_NOT_WORK_REGION),margin=2)
+prop.table(table(loan5$TARGET, loan5$REG_CITY_NOT_LIVE_CITY),margin=2)
+prop.table(table(loan5$TARGET, loan5$REG_CITY_NOT_WORK_CITY),margin=2)
+prop.table(table(loan5$TARGET, loan5$LIVE_CITY_NOT_WORK_CITY),margin=2)
+prop.table(table(loan5$TARGET, loan5$ORGANIZATION_TYPE),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_2),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_3),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_4),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_5),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_6),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_7),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_8),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_9),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_10),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_11),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_12),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_13),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_14),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_16),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_17),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_18),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_19),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_20),margin=2)
+prop.table(table(loan5$TARGET, loan5$FLAG_DOCUMENT_21),margin=2)
+loan6 <- loan5[c(2:31, 34:39, 41, 45:49, 70:76)]
+colSums(is.na(loan6))
+loan6 <- na.omit(loan6)
+sum(is.na(loan6))
+
+#Convert nominal variables into numeric
+
+loan6$CODE_GENDER <- as.numeric(loan6$CODE_GENDER == "M")
+loan6$NAME_CONTRACT_TYPE <- as.numeric(loan6$NAME_CONTRACT_TYPE == "Cash loans")
+loan6$FLAG_OWN_CAR <- as.numeric(loan6$FLAG_OWN_CAR == "Y")
+loan6$FLAG_OWN_REALTY <- as.numeric(loan6$FLAG_OWN_REALTY == "Y")
+loan6$AccByChildren <- as.numeric(loan6$NAME_TYPE_SUITE == "Children")
+loan6$AccByFamily <- as.numeric(loan6$NAME_TYPE_SUITE == "Family")
+loan6$AccByGroup <- as.numeric(loan6$NAME_TYPE_SUITE == "Group of people")
+loan6$AccBySpouse <- as.numeric(loan6$NAME_TYPE_SUITE == "Spouse, partner")
+loan6$AccByNone <- as.numeric(loan6$NAME_TYPE_SUITE == "Unaccompanied")
+loan6$AccByUnknown <- as.numeric(loan6$NAME_TYPE_SUITE == "")
+loan6$IncomeBusiness <- as.numeric(loan6$NAME_INCOME_TYPE == "Businessman")
+loan6$IncomeCommercial <- as.numeric(loan6$NAME_INCOME_TYPE == "Commercial associate")
+loan6$IncomeMaternity <- as.numeric(loan6$NAME_INCOME_TYPE == "Maternity leave")
+loan6$IncomePensioner <- as.numeric(loan6$NAME_INCOME_TYPE == "Pensioner")
+loan6$IncomeState <- as.numeric(loan6$NAME_INCOME_TYPE == "State servant")
+loan6$IncomeStudent <- as.numeric(loan6$NAME_INCOME_TYPE == "Student")
+loan6$IncomeUnemployed <- as.numeric(loan6$NAME_INCOME_TYPE == "Unemployed")
+loan6$IncomeWorking <- as.numeric(loan6$NAME_INCOME_TYPE == "Working")
+loan6$AcademicDegree <- as.numeric(loan6$NAME_EDUCATION_TYPE == "Academic degree")
+loan6$HigherEdu <- as.numeric(loan6$NAME_EDUCATION_TYPE == "Higher education")
+loan6$IncompleteEdu <- as.numeric(loan6$NAME_EDUCATION_TYPE == "Incomplete higher")
+loan6$LowerSec <- as.numeric(loan6$NAME_EDUCATION_TYPE == "Lower seconadry")
+loan6$Secondary <- as.numeric(loan6$NAME_EDUCATION_TYPE == "Secondary / secondary special")
+loan6$FamCivil <- as.numeric(loan6$NAME_FAMILY_STATUS == "Civil marriage")
+loan6$FamMarried <- as.numeric(loan6$NAME_FAMILY_STATUS == "Married")
+loan6$FamSeparated <- as.numeric(loan6$NAME_FAMILY_STATUS == "Separated")
+loan6$FamSingle <- as.numeric(loan6$NAME_FAMILY_STATUS == "Single / not married")
+loan6$FamWidow <- as.numeric(loan6$NAME_FAMILY_STATUS == "Widow")
+loan6$HouseCoop <- as.numeric(loan6$NAME_HOUSING_TYPE == "Co-op apartment")
+loan6$HouseOrApt <- as.numeric(loan6$NAME_HOUSING_TYPE == "House / apartment")
+loan6$HouseMunicipal <- as.numeric(loan6$NAME_HOUSING_TYPE == "Municipal apartment")
+loan6$HouseOffice <- as.numeric(loan6$NAME_HOUSING_TYPE == "Office apartment")
+loan6$HouseRent <- as.numeric(loan6$NAME_HOUSING_TYPE == "Rented apartment")
+loan6$HouseParents <- as.numeric(loan6$NAME_HOUSING_TYPE == "With parents")
+loan6$Drivers <- as.numeric(loan6$OCCUPATION_TYPE == "Drivers")
+loan6$Laborers <- as.numeric(loan6$OCCUPATION_TYPE == "Laborers") 
+names(loan6)
+
+#Convert age in days into age in years. Also convert other days’ variables that are negative into positive values
+
+loan7 <- mutate(loan6, Age = (DAYS_BIRTH/-365))
+loan7 <- mutate(loan7, DaysEmp = (DAYS_EMPLOYED/-1))
+loan7 <- mutate(loan7, DaysRegist = (DAYS_REGISTRATION/-1))
+loan7 <- mutate(loan7, DaysId = (DAYS_ID_PUBLISH/-1))
+loan7 <- mutate(loan7, DaysPhone = (DAYS_LAST_PHONE_CHANGE/-1))
+names(loan7)
+
+#Take all quantitative variables only and check correlations with TARGET
+
+loan.quant <- loan7[c(1,6:10, 16,28,38:41,43:49,82:86)]
+names(loan.quant)
+corr <- cor(loan.quant)
+round(corr,4)
+
+#Remove all insignificant variables based on proportion tables and correlations
+
+loan8 <- loan7[c(1:3,6, 10, 16, 22, 30, 34:35, 39, 48:49, 68:69, 72,
+79,82,84:86)]
+
+#Rename variables for simplicity
+
+names(loan8)
+names(loan8)[1] <- "Target"
+names(loan8)[2] <- "LoanType"
+names(loan8)[3] <- "Gender"
+names(loan8)[4] <- "Children"
+names(loan8)[5] <- "GoodsPrice"
+names(loan8)[6] <- "RegPopulation"
+names(loan8)[7] <- "EmpPhone"
+names(loan8)[8] <- "RegRating"
+names(loan8)[9] <- "LiveMatch"
+names(loan8) [10] <- "WorkMatch"
+names(loan8)[13] <- "Scores"
+names(loan8)[11] <- "Def30"
+names(loan8)[12] <- "EnquiriesYr"
+names(loan8)
+
+loan8$RegRating <- as.factor(loan8$RegRating)
+str(loan8)
+
+#Split dataset into training and testing sets
+
+library(caTools)
+split <- sample.split(loan8, SplitRatio = 0.7)
+training <- subset(loan8, split == "TRUE")
+testing <- subset(loan8, split == "FALSE")
+names(training)
+
+## Modeling ##
+#Start with all variables then remove one at a time based on p-value
+
+m.all <- glm(Target ~ ., data = training, family = "binomial")
+summary(m.all)
+model_1 <- glm(Target ~ .-HouseParents, data = training, family = "binomial")
+summary(model_1)
+model_2 <- glm(Target ~ .-HouseParents-RegPopulation, data = training, family = "binomial")
+summary(model_2)
+
+#18-predictors model (all p-values < 0.05)
+
+model_3 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch, data = training, family = "binomial")
+summary(model_3)
+model_4 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch-Children, data = training, family = "binomial")
+summary(model_4)
+model_5 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch-Children -FamSingle, data = training, family = "binomial")
+summary(model_5)
+model_6 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch-Children-FamSingle-FamCivil, data = training, family = "binomial")
+summary(model_6)
+model_7 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch-Children-FamSingle-FamCivil-GoodsPrice, data = training, family = "binomial")
+summary(model_7)
+model_8 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch-Children-FamSingle-FamCivil-GoodsPrice-EnquiriesYr, data = training, family = "binomial")
+summary(model_8)
+model_9 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch-Children-FamSingle-FamCivil-GoodsPrice-EnquiriesYr-DaysRegist, data = training,
+family = "binomial")
+summary(model_9)
+model_10 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch-Children-FamSingle-FamCivil-GoodsPrice-EnquiriesYr-DaysRegist-DaysId, data = training, family = "binomial")
+summary(model_10)
+
+#10-predictors model (all predictors have extremely small p-values)
+
+model_11 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch-Children-FamSingle-FamCivil-GoodsPrice-EnquiriesYr-DaysRegist-DaysId-LiveMatch, data = training, family = "binomial")
+summary(model_11)
+
+#12-predictors model (Final Model)
+
+model_12 <- glm(Target ~ .-HouseParents-RegPopulation-WorkMatch-Children-FamSingle-FamCivil-EnquiriesYr-DaysRegist-GoodsPrice, data = training, family = "binomial")
+summary(model_12)
+
+#Check performance of models using confusion matrix
+
+resp1 <- predict(model_3, training, type="response")
+table(ActualValue=training$Target, PredictiveValue=resp>0.5)
+table(ActualValue=training$Target, PredictiveValue=resp>0.2)
+resp2 <- predict(model_4, testing, type="response")
+table(ActualValue=training$Target, PredictiveValue=resp>0.5)
+resp3 <- predict(model_5, testing, type="response")
+table(ActualValue=training$Target, PredictiveValue=resp>0.5)
+resp4 <- predict(model_6, testing, type="response")
+table(ActualValue=training$Target, PredictiveValue=resp>0.5)
+resp5 <- predict(model_7, testing, type="response")
+table(ActualValue=training$Target, PredictiveValue=resp>0.5)
+resp6 <- predict(model_8, testing, type="response")
+table(ActualValue=training$Target, PredictiveValue=resp>0.5)
+resp7 <- predict(model_9, testing, type="response")
+table(ActualValue=training$Target, PredictiveValue=resp>0.5)
+resp8 <- predict(model_10, testing, type="response")
+table(ActualValue=training$Target, PredictiveValue=resp>0.5)
+resp9 <- predict(model_11, testing, type="response")
+table(ActualValue=testing$Target, PredictiveValue=resp9>0.5)
+table(ActualValue=training$Target, PredictiveValue=resp>0.2)
+resp10 <- predict(model_12, testing, type="response")
+s=table(ActualValue=testing$Target, PredictiveValue=resp10>0.5)
+table(ActualValue=training$Target, PredictiveValue=resp>0.2)
+
+#ROC plot
+
+library(ROCR)
+ROCRPred <- prediction(resp, training$Target)
+ROCRPerf <- performance(ROCRPred, "tpr", "fpr")
+plot(ROCRPerf,colorize=TRUE,print.cutoffs.at=seq(0.1,by=0.1))
+
+## Simulations ##
+#Create new datasets
+
+data_1 = numeric(41)
+data_2 = numeric(41)
+threshold = numeric(41)
+
+#Loop to compute total amount that could be loss at each threshold level
+
+for (i in 10:50){
+  t=i/100 #Threshold from 0.10 to 0.50
+  cm=table(ActualValue=testing$Target, PredictiveValue=resp10>t) #C.matrix
+  fp=cm[1,2] #Generate type I errors
+  fn=cm[2,1] #Generate type II errors
+  loss_1=(1*fp)+(3*fn) #1000:3000 ratio
+  loss_2=(1*fp)+(5*fn) #1000:5000 ratio
+  data_1[i-9] <- loss_1 #Store the amount loss at each threshold levels from 0.10 to 0.50 for the 1000:3000 ratio into data_1
+  data_2[i-9] <- loss_2 #Store the amount loss at each threshold levels from 0.10 to 0.50 assuming 1000:5000 ratio into data_2
+  threshold[i-9] <- t #Store each threshold levels
+}
+
+#Plot of threshold level vs. possible amount loss for the 1000:3000 ratio
+
+plot(data_1~threshold, xlab="Threshold Level", ylab="Possible Amount Loss
+(thousands $)",
+type="p", lwd=2, col="red", main="1000:3000 Ratio", cex.main=1.5,
+cex.lab=1.2)
+
+#Plot of threhold level vs. possible amount loss for the 1000:5000 ratio
+
+plot(data_2~threshold, xlab="Threshold Level", ylab="Possible Amount Loss
+(thousands $)",
+type="p", lwd=2, col="blue", main="1000:5000 Ratio", cex.main=1.5,
+cex.lab=1.2)
+
+#Same process as above for 1000:10000 ratio.
+#Need new loop because minimum point is at threshold level of 0.09. So, need to start the threshold at 0.01 instead of 0.10 to show this.
+
+data_3 = numeric(44)
+threshold_2 = numeric(44)
+for (j in 1:44){
+  th=j/100
+  M=table(ActualValue=testing$Target, PredictiveValue=resp10>th)
+  fpos=M[1,2]
+  fneg=M[2,1]
+  loss_3=(1*fpos)+(10*fneg)
+  data_3[j] <- loss_3
+  threshold_2[j] <- th
+}
+#Plot of threhold level vs. possible amount loss for the 1000:10000 ratio
+
+plot(data_3~threshold_2, xlab="Threshold Level", ylab="Possible Amount Loss
+(thousands $)",type="p", lwd=2, col="purple", main="1000:10000 Ratio",
+cex.main=1.5, cex.lab=1.2)
